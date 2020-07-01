@@ -7,10 +7,14 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.File;
 import java.util.Arrays;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Consumer;
+import javax.sound.sampled.*;
 import javax.swing.*;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
 
 public class Board extends JComponent implements KeyListener {
     int X;
@@ -134,7 +138,7 @@ public class Board extends JComponent implements KeyListener {
                             this.skeleton.setHpActual(this.skeleton.getHpActual() - (this.skeleton.getSv() - this.hero.getDp()));
                             if (this.skeleton.getHpActual() < 0) {
                                 this.mapOfMonsters[i][j] = 0;
-                                hero.setLevel(hero.getLevel()+1);
+                                levelUp();
                             }else {
                                 this.hero.setHpActual(this.hero.getHpActual() - (this.hero.getSv() - this.boss.getDp()));
                             }
@@ -156,7 +160,7 @@ public class Board extends JComponent implements KeyListener {
                             this.boss.setHpActual(this.boss.getHpActual() - (this.boss.getSv() - this.hero.getDp()));
                             if (this.boss.getHpActual() < 0) {
                                 this.mapOfMonsters[i][j] = 0;
-                                hero.setLevel(hero.getLevel()+1);
+                                levelUp();
 
                             }else{
                                 this.hero.setHpActual(this.hero.getHpActual() - (this.hero.getSv() - this.boss.getDp()));
@@ -175,9 +179,27 @@ public class Board extends JComponent implements KeyListener {
                 this.image.draw(graphics);
             }
             if (this.hero.getHpActual() < 0) {
+                try {
+                    File yourFile;
+                    AudioInputStream stream;
+                    AudioFormat format;
+                    DataLine.Info info;
+                    Clip clip;
+                    File file = new File("music/gameOver.wav");
+                    stream = AudioSystem.getAudioInputStream(file);
+                    format = stream.getFormat();
+                    info = new DataLine.Info(Clip.class, format);
+                    clip = (Clip) AudioSystem.getLine(info);
+                    clip.open(stream);
+                    clip.start();
+                }
+                catch (Exception e) {
+                    //whatevers
+                }
                     JFrame f;
                     f=new JFrame();
                     JOptionPane.showMessageDialog(f,"GAME OVER!!!!");
+
                     System.exit(0);
             }
         }
@@ -188,7 +210,26 @@ public class Board extends JComponent implements KeyListener {
         stats.draw(graphics);
         this.space = false;
     }
-
+    public void levelUp(){
+        hero.setLevel(hero.getLevel()+1);
+        try {
+            File yourFile;
+            AudioInputStream stream;
+            AudioFormat format;
+            DataLine.Info info;
+            Clip clip;
+            File file = new File("music/levelUpCongrat.wav");
+            stream = AudioSystem.getAudioInputStream(file);
+            format = stream.getFormat();
+            info = new DataLine.Info(Clip.class, format);
+            clip = (Clip) AudioSystem.getLine(info);
+            clip.open(stream);
+            clip.start();
+        }
+        catch (Exception e) {
+            //whatevers
+        }
+    }
     public boolean isMoreMonstersNeeded(){
         int counterOfMonsters = 0;
         for (int i = 0; i <10 ; i++) {
