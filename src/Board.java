@@ -9,8 +9,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.Arrays;
 import java.util.concurrent.ThreadLocalRandom;
-import javax.swing.JComponent;
-import javax.swing.JFrame;
+import java.util.function.Consumer;
+import javax.swing.*;
 
 public class Board extends JComponent implements KeyListener {
     int X;
@@ -130,28 +130,28 @@ public class Board extends JComponent implements KeyListener {
                     this.image = new PositionedImage("img/skeleton.png", i * 72, j * 72);
                     if (this.X == i * 72 && this.Y == j * 72 && this.space) {
                         skeleton=new Stats("Monster", this.hero.getLevel());
-                        if (this.hero.isSuccessfulStrike(this.hero.getSp(), this.skeleton.getDp())) {
+                        if (this.hero.isSuccessfulStrike(this.hero.getSp(), this.skeleton.getDp())  ) {
                             this.skeleton.setHpActual(this.skeleton.getHpActual() - (this.skeleton.getSv() - this.hero.getDp()));
                             if (this.skeleton.getHpActual() < 0) {
                                 this.mapOfMonsters[i][j] = 0;
                                 hero.setLevel(hero.getLevel()+1);
-                            }else{
+                            }else {
                                 this.hero.setHpActual(this.hero.getHpActual() - (this.hero.getSv() - this.boss.getDp()));
                             }
 
                         } else {
-                            this.hero.setHpActual(this.hero.getHpActual() - (this.hero.getSv() - this.boss.getDp()));
-                            if (this.hero.getHpActual() < 0) {
-                                System.out.printf("GAME OVER");
-                                System.exit(0);
-                            }
-                        }
+
+
+                            this.hero.setHpActual(this.hero.getHpActual() - (this.hero.getSv() - this.boss.getDp()));}
+
+
                     }
                 }
 
                 if (this.mapOfMonsters[i][j] == 2) {
                     this.image = new PositionedImage("img/boss.png", i * 72, j * 72);
                     if (this.X == i * 72 && this.Y == j * 72 && this.space) {
+
                         if (this.hero.isSuccessfulStrike(this.hero.getSp(), this.boss.getDp())) {
                             this.boss.setHpActual(this.boss.getHpActual() - (this.boss.getSv() - this.hero.getDp()));
                             if (this.boss.getHpActual() < 0) {
@@ -163,18 +163,22 @@ public class Board extends JComponent implements KeyListener {
                             }
                         } else {
                             this.hero.setHpActual(this.hero.getHpActual() - (this.hero.getSv() - this.boss.getDp()));
-                            if (this.hero.getHpActual() < 0) {
-                                System.out.printf("GAME OVER");
-                                System.exit(0);
-                            }
+
                         }
                     }
                 }
-                //if(Arrays.stream(this.mapOfMonsters).forEach(0);){
-                //    this.mapOfMonsters = this.monsterGen();
-                // }
+
+                if(isMoreMonstersNeeded()){
+                     mapOfMonsters = this.monsterGen();
+                }
 
                 this.image.draw(graphics);
+            }
+            if (this.hero.getHpActual() < 0) {
+                    JFrame f;
+                    f=new JFrame();
+                    JOptionPane.showMessageDialog(f,"GAME OVER!!!!");
+                    System.exit(0);
             }
         }
 
@@ -185,6 +189,21 @@ public class Board extends JComponent implements KeyListener {
         this.space = false;
     }
 
+    public boolean isMoreMonstersNeeded(){
+        int counterOfMonsters = 0;
+        for (int i = 0; i <10 ; i++) {
+            for (int j = 0; j <10 ; j++) {
+                counterOfMonsters+=mapOfMonsters[i][j];
+
+            }
+        }
+        if(counterOfMonsters==0){
+            return  true;
+        }else{
+            return  false;
+        }
+    }
+
     public static void main(String[] args) {
         JFrame frame = new JFrame("RPG Game");
         Board board = new Board();
@@ -192,6 +211,7 @@ public class Board extends JComponent implements KeyListener {
         frame.setDefaultCloseOperation(3);
         frame.setVisible(true);
         frame.pack();
+        frame.setLocationRelativeTo(null);
         frame.addKeyListener(board);
     }
 
