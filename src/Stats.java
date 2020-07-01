@@ -70,6 +70,23 @@ public class Stats {
 
     public void setLevel(int level) {
         this.level = level;
+        this.hpActual = this.hpActual+ThreadLocalRandom.current().nextInt(1, 5);
+        this.dp=this.dp+ThreadLocalRandom.current().nextInt(1, 5);
+        this.sp=this.sp+ThreadLocalRandom.current().nextInt(1, 5);
+    }
+    public void mapChanged(){
+       int tenPercentChance = ThreadLocalRandom.current().nextInt(1, 10);
+       int fortyPercentChance = ThreadLocalRandom.current().nextInt(1, 40);
+       int fiftyPercentChance = ThreadLocalRandom.current().nextInt(1, 50);
+       int hundredPercentChange = ThreadLocalRandom.current().nextInt(1, 100);
+       if(tenPercentChance>fortyPercentChance && tenPercentChance>fiftyPercentChance){
+           this.hpActual=this.getHpMax();
+       }else if(fortyPercentChance>fiftyPercentChance){
+           this.hpActual= (int) (this.getHpActual()*(double)1/3);
+       }else if(fiftyPercentChance>hundredPercentChange){
+           this.hpActual= (int) (this.getHpActual()*(double)1/10);
+       }
+
     }
 
     public void setDp(int dp) {

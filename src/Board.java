@@ -174,6 +174,7 @@ public class Board extends JComponent implements KeyListener {
 
                 if(isMoreMonstersNeeded()){
                      mapOfMonsters = this.monsterGen();
+                     hero.mapChanged();
                 }
 
                 this.image.draw(graphics);
