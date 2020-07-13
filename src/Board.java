@@ -204,6 +204,8 @@ public class Board extends JComponent implements KeyListener {
                     System.exit(0);
             }
         }
+        
+        
 
         imageHero.draw(graphics);
         this.hero.createImg(this.hero);
